@@ -35,6 +35,10 @@ RUN microdnf install -y \
         nano \
         rsync \
         git \
+        g++ \
+        gcc \
+        wget \
+        libxcb \
     && microdnf clean all
 
 COPY --from=python-install --link /opt/conda /opt/conda
@@ -43,6 +47,12 @@ COPY --from=python-install --link /opt/conda/etc/profile.d/conda.sh /etc/profile
 RUN --mount=type=cache,target=/root/.cache/pip \
     source /etc/profile.d/conda.sh; \
     conda activate;
+
+RUN wget https://github.com/tmux/tmux-builds/releases/download/v3.6a/tmux-3.6a-linux-x86_64.tar.gz \
+    && tar -xzf tmux-3.6a-linux-x86_64.tar.gz \
+    && mv tmux /usr/local/bin/ \
+    && rm -f tmux-3.6a-linux-x86_64.tar.gz 
+
 
 # setup non-root user for OpenShift
 ENV HOME=/home/develop
